@@ -188,8 +188,8 @@ static ssize_t device_write(struct file *file, const char __user *buffer, size_t
 	case APPEND_ADDR:
         prt_pt_flag = 1;
 //		pr_info("Storing addr %p\n", (void *)address);
-        print_page_table(address, "Image");
 		store_nuked_address(&nuke_info_head, address);
+        print_page_table(address, "Image");
 		break;
 
 	case PASS_SPECIAL_ADDR:

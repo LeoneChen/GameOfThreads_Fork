@@ -262,9 +262,9 @@ void set_sig_handler(void)
 }
 
 
-void *thread_func(void* i)
+void *thread_func(int idx)
 {
-    int idx = *((int *)i);
+//    int idx = *((int *)i);
 
     // if(idx == 0)
     // {
@@ -427,15 +427,15 @@ int main(int argc, char* argv[])
     for (int i = 0; i < THREAD_NUM; i++)
     {
         kill_thread[i] = 0;
-        int *arg = (int*) malloc(sizeof(*arg));
-            if( arg == NULL ) {
-                cout << "couldn't allocate memory" << endl;
-                return -1;
-            }
-        *arg = i;
+//        int *arg = (int*) malloc(sizeof(*arg));
+//            if( arg == NULL ) {
+//                cout << "couldn't allocate memory" << endl;
+//                return -1;
+//            }
+//        *arg = i;
 
         cout << "Starting pthread" << endl;
-        int ret = pthread_create(&trd[i], NULL, thread_func, arg);
+        int ret = pthread_create(&trd[i], NULL, thread_func, i);
         // trd[i] = thread(thread_func, i);
     }
 
