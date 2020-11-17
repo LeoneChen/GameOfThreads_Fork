@@ -325,31 +325,32 @@ struct file_operations Fops = {
  */
 static int handler_fault(struct kprobe *p, struct pt_regs *regs, int trapnr)
 {
-	pte_t pte, temp_pte, *faulting_pte;
-	faulting_pte = (pte_t *)regs->di;
-	pte = *faulting_pte;
+	pte_t *faulting_pte = (pte_t *)regs->di;
+    pte_t pte = *faulting_pte;
+    unsigned long virt = regs->si;
 
 	fault_fault_cnt++;
 //	pr_info("fault-on-fault\n");
 
-    uint64_t v0 = pte_pfn(*faulting_pte), v1 = pte_pfn(*(special.nuke_pte));
+    uint64_t v0 = pte_pfn(*faulting_pte);
+    uint64_t v1 = pte_pfn(*(special.nuke_pte));
 
     if (pte_in_list(v0) == 1) {    // fault on an image
-        unsigned long virt = regs->si;
         print_page_table(virt, "Image FOF");
         // Cancel the current page fault
         if (!(pte_flags(pte) & _PAGE_PRESENT) && (pte_flags(pte) & _PAGE_PROTNONE)) {
-            temp_pte = pte_set_flags(pte, _PAGE_PRESENT);
+            pte_t temp_pte = pte_set_flags(pte, _PAGE_PRESENT);
             set_pte(faulting_pte, temp_pte);
         }
     } else if (v0 == v1) {
-        unsigned long virt = regs->si;
         print_page_table(virt, "Model FOF");
         if (!(pte_flags(pte) & _PAGE_PRESENT) && (pte_flags(pte) & _PAGE_PROTNONE)) {
             // Undo arbitrarily caused page fault
-            temp_pte = pte_set_flags(pte, _PAGE_PRESENT);
+            pte_t temp_pte = pte_set_flags(pte, _PAGE_PRESENT);
             set_pte(faulting_pte, temp_pte);
         }
+    } else {
+        print_page_table(virt, "Unknown FOF");
     }
 
 	// Mark attack as off
