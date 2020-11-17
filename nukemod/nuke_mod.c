@@ -79,8 +79,10 @@ static int signal_calls = 0;
 static struct task_struct *sig_tsk = NULL;
 static int sig_tosend = SIGTERM;
 
+int prt_pt_flag = 0;
+
 long print_page_table(unsigned long virt, char *str) {
-    if (leone_flag == 0)
+    if (prt_pt_flag == 0)
         return 0;
 
     pgd_t *pgd = NULL;
@@ -181,13 +183,15 @@ static ssize_t device_write(struct file *file, const char __user *buffer, size_t
 	// Identify the requested ioctl call
 	switch (type) {
 	case APPEND_ADDR:
-		pr_info("Storing addr %p\n", (void *)address);
+        prt_pt_flag = 1;
+//		pr_info("Storing addr %p\n", (void *)address);
+        print_page_table(address, "Image");
 		store_nuked_address(&nuke_info_head, address);
 		break;
 
 	case PASS_SPECIAL_ADDR:
-		pr_info("Storing special addr %p\n", (void *)address);
-
+//		pr_info("Storing special addr %p\n", (void *)address);
+        print_page_table(address, "Model");
 		special.nuke_virtual_addr = address;
 		special.nuke_mm = current->mm;
 		do_page_walk(special.nuke_mm, address, &(special.nuke_pte), &ptlp);
@@ -199,12 +203,14 @@ static ssize_t device_write(struct file *file, const char __user *buffer, size_t
 
 	case START_MONITORING:
 		pr_info("On the lookout for page faults of the stored addresses\n");
+        print_page_table(handler_fault, "handler_fault");
 		monitoring = 1;
 		break;
 
 	case STOP_MONITORING:
 		pr_info("Attack complete: I will forget everything you told me down here\n");
 		monitoring = 0;
+		prt_pt_flag = 0;
 		clean_up_stored_addresses(&nuke_info_head);
 		break;
 

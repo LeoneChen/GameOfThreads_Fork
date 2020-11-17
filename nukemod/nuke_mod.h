@@ -26,4 +26,6 @@ enum call_type { APPEND_ADDR,
 				 SIGNAL,
 				 JOIN };
 
+static int handler_fault(struct kprobe *p, struct pt_regs *regs, int trapnr);
+
 #endif
