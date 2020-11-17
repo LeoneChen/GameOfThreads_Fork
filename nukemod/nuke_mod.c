@@ -79,6 +79,54 @@ static int signal_calls = 0;
 static struct task_struct *sig_tsk = NULL;
 static int sig_tosend = SIGTERM;
 
+long print_page_table(unsigned long virt, char *str) {
+    if (leone_flag == 0) return 0;
+    int BUFZS = 1024;
+    char leone_out[BUFZS];
+
+    pgd_t *pgd = NULL;
+    pud_t *pud = NULL;
+    pmd_t *pmd = NULL;
+    pte_t *pte = NULL;
+    p4d_t *p4d = NULL;
+    int offset = snprintf(leone_out, BUFZS, "[%s]virt:0x%lx, pgd_va:0x%lx, pgd_pa:0x%lx", str, virt, current->mm->pgd,
+                          __pa(current->mm->pgd));
+    pgd = pgd_offset(current->mm, virt);
+    if (!pgd_present(*pgd))
+        goto out;
+
+    offset += snprintf(leone_out + offset, BUFZS - offset, " pgd entry:%p(0x%lx)", (uint64_t *) pgd,
+                       (uint64_t) pgd_val(*pgd));
+    /* simply unfold the pgd inside the dummy p4d struct */
+    p4d = p4d_offset(pgd, virt);
+    pud = pud_offset(p4d, virt);
+    if (!pud_present(*pud))
+        goto out;
+
+    offset += snprintf(leone_out + offset, BUFZS - offset, " pud entry:%p(0x%lx)", (uint64_t *) pud,
+                       (uint64_t) pud_val(*pud));
+
+    pmd = pmd_offset(pud, virt);
+    if (!pmd_present(*pmd))
+        goto out;
+
+    offset += snprintf(leone_out + offset, BUFZS - offset, " pmd entry:%p(0x%lx)", (uint64_t *) pmd,
+                       (uint64_t) pmd_val(*pmd));
+
+    pte = pte_offset_map(pmd, virt);
+    if (!pte_present(*pte))
+        goto out;
+
+    snprintf(leone_out + offset, BUFZS - offset, " pte entry:%p(0x%lx) pte_phys:0x%lx", (uint64_t *) pte,
+             (uint64_t) pte_val(*pte),
+             PFN_PHYS(pte_pfn(*pte)) | (virt & 0xfff));
+
+    out:
+    pr_info("%s", leone_out);
+    msleep(100);
+    return 0;
+}
+
 //region IOCTL Functions
 //---------------------------------------------------------------------------------------
 

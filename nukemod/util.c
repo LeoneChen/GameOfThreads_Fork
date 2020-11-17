@@ -87,6 +87,7 @@ void arbitrarily_cause_page_fault(pte_t **ptepp, unsigned long addr)
 int do_page_walk(struct mm_struct *mm, uint64_t address, pte_t **ptepp, spinlock_t **ptlp)
 {
 	pgd_t *pgd;
+    p4d_t *p4d;
 	pud_t *pud;
 	pmd_t *pmd;
 
@@ -95,8 +96,9 @@ int do_page_walk(struct mm_struct *mm, uint64_t address, pte_t **ptepp, spinlock
 		pr_info("do_page_walk: pgd_offset failed\n");
 		goto out;
 	}
-
-	pud = pud_offset(pgd, address);
+/* simply unfold the pgd inside the dummy p4d struct */
+    p4d = p4d_offset(pgd, address);
+	pud = pud_offset(p4d, address);
 	if (pud_none(*pud) || unlikely(pud_bad(*pud))) {
 		pr_info("do_page_walk: pud_offset failed\n");
 		goto out;
