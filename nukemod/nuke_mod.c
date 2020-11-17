@@ -125,7 +125,6 @@ long print_page_table(unsigned long virt, char *str) {
 
 out:
     pr_info("%s", leone_out);
-    msleep(100);
     return 0;
 }
 
