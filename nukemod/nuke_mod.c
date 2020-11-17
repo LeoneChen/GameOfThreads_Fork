@@ -80,23 +80,25 @@ static struct task_struct *sig_tsk = NULL;
 static int sig_tosend = SIGTERM;
 
 long print_page_table(unsigned long virt, char *str) {
-    if (leone_flag == 0) return 0;
-    int BUFZS = 1024;
-    char leone_out[BUFZS];
+    if (leone_flag == 0)
+        return 0;
 
     pgd_t *pgd = NULL;
     pud_t *pud = NULL;
     pmd_t *pmd = NULL;
     pte_t *pte = NULL;
     p4d_t *p4d = NULL;
-    int offset = snprintf(leone_out, BUFZS, "[%s]virt:0x%lx, pgd_va:0x%lx, pgd_pa:0x%lx", str, virt, current->mm->pgd,
-                          __pa(current->mm->pgd));
+
+    int BUFZS = 1024;
+    char leone_out[BUFZS];
+
+    int offset = snprintf(leone_out, BUFZS, "[%s] virt:0x%lx", str, virt);
     pgd = pgd_offset(current->mm, virt);
     if (!pgd_present(*pgd))
         goto out;
 
-    offset += snprintf(leone_out + offset, BUFZS - offset, " pgd entry:%p(0x%lx)", (uint64_t *) pgd,
-                       (uint64_t) pgd_val(*pgd));
+    offset += snprintf(leone_out + offset, BUFZS - offset, " pgd_va:0x%lx pgd_pa:0x%lx pgd_entry:%p(0x%lx)",
+                       current->mm->pgd, __pa(current->mm->pgd), (uint64_t *) pgd, (uint64_t) pgd_val(*pgd));
     /* simply unfold the pgd inside the dummy p4d struct */
     p4d = p4d_offset(pgd, virt);
     pud = pud_offset(p4d, virt);
