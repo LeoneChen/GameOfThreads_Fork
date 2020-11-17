@@ -120,8 +120,7 @@ long print_page_table(unsigned long virt, char *str) {
         goto out;
 
     snprintf(leone_out + offset, BUFZS - offset, " pte_entry:%p(0x%lx) pte_phys:0x%lx", (uint64_t *) pte,
-             (uint64_t) pte_val(*pte),
-             PFN_PHYS(pte_pfn(*pte)) | (virt & 0xfff));
+             (uint64_t) pte_val(*pte), PFN_PHYS(pte_pfn(*pte)) | (virt & 0xfff));
 
 out:
     pr_info("%s", leone_out);
