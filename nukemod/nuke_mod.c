@@ -105,25 +105,25 @@ long print_page_table(unsigned long virt, char *str) {
     if (!pud_present(*pud))
         goto out;
 
-    offset += snprintf(leone_out + offset, BUFZS - offset, " pud entry:%p(0x%lx)", (uint64_t *) pud,
+    offset += snprintf(leone_out + offset, BUFZS - offset, " pud_entry:%p(0x%lx)", (uint64_t *) pud,
                        (uint64_t) pud_val(*pud));
 
     pmd = pmd_offset(pud, virt);
     if (!pmd_present(*pmd))
         goto out;
 
-    offset += snprintf(leone_out + offset, BUFZS - offset, " pmd entry:%p(0x%lx)", (uint64_t *) pmd,
+    offset += snprintf(leone_out + offset, BUFZS - offset, " pmd_entry:%p(0x%lx)", (uint64_t *) pmd,
                        (uint64_t) pmd_val(*pmd));
 
     pte = pte_offset_map(pmd, virt);
     if (!pte_present(*pte))
         goto out;
 
-    snprintf(leone_out + offset, BUFZS - offset, " pte entry:%p(0x%lx) pte_phys:0x%lx", (uint64_t *) pte,
+    snprintf(leone_out + offset, BUFZS - offset, " pte_entry:%p(0x%lx) pte_phys:0x%lx", (uint64_t *) pte,
              (uint64_t) pte_val(*pte),
              PFN_PHYS(pte_pfn(*pte)) | (virt & 0xfff));
 
-    out:
+out:
     pr_info("%s", leone_out);
     msleep(100);
     return 0;
