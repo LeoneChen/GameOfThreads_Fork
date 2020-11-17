@@ -262,9 +262,9 @@ void set_sig_handler(void)
 }
 
 
-void *thread_func(int idx)
+void *thread_func(void* i)
 {
-//    int idx = *((int *)i);
+    int idx = *((int *)i);
 
     // if(idx == 0)
     // {
@@ -435,7 +435,7 @@ int main(int argc, char* argv[])
 //        *arg = i;
 
         cout << "Starting pthread" << endl;
-        int ret = pthread_create(&trd[i], NULL, thread_func, i);
+        int ret = pthread_create(&trd[i], NULL, thread_func, &i);
         // trd[i] = thread(thread_func, i);
     }
 
