@@ -96,7 +96,7 @@ long print_page_table(unsigned long virt, char *str) {
 
     int offset = snprintf(leone_out, BUFZS, "[%s] virt:0x%lx", str, virt);
     pgd = pgd_offset(current->mm, virt);
-    if (!pgd_present(*pgd))
+    if (!pgd_present(*pgd) || pgd_none(*pgd) || unlikely(pgd_bad(*pgd)))
         goto out;
 
     offset += snprintf(leone_out + offset, BUFZS - offset, " pgd_va:0x%lx pgd_pa:0x%lx pgd_entry:%p(0x%lx)",
@@ -104,26 +104,29 @@ long print_page_table(unsigned long virt, char *str) {
     /* simply unfold the pgd inside the dummy p4d struct */
     p4d = p4d_offset(pgd, virt);
     pud = pud_offset(p4d, virt);
-    if (!pud_present(*pud))
+    if (!pud_present(*pud) || pud_none(*pud) || unlikely(pud_bad(*pud)))
         goto out;
 
     offset += snprintf(leone_out + offset, BUFZS - offset, " pud_entry:%p(0x%lx)", (uint64_t *) pud,
                        (uint64_t) pud_val(*pud));
 
     pmd = pmd_offset(pud, virt);
-    if (!pmd_present(*pmd))
+    if (!pmd_present(*pmd) || pmd_none(*pmd) || unlikely(pmd_bad(*pmd)))
         goto out;
 
     offset += snprintf(leone_out + offset, BUFZS - offset, " pmd_entry:%p(0x%lx)", (uint64_t *) pmd,
                        (uint64_t) pmd_val(*pmd));
 
-    pte = pte_offset_map(pmd, virt);
+    spinlock_t *ptl;
+    pte = pte_offset_map_lock(current->mm, pmd, virt, &ptl);
+
     if (!pte_present(*pte))
         goto out;
 
     snprintf(leone_out + offset, BUFZS - offset, " pte_entry:%p(0x%lx) pte_phys:0x%lx", (uint64_t *) pte,
              (uint64_t) pte_val(*pte), PFN_PHYS(pte_pfn(*pte)) | (virt & 0xfff));
 
+    pte_unmap_unlock(pte, ptl);
 out:
     pr_info("%s", leone_out);
     return 0;
@@ -350,7 +353,9 @@ static int handler_fault(struct kprobe *p, struct pt_regs *regs, int trapnr)
             set_pte(faulting_pte, temp_pte);
         }
     } else {
-        print_page_table(virt, "Unknown FOF");
+        pr_info("[Unknown FOF] virt:0x%lx faulting_pte:0x%lx(0x%lx)", virt,
+                (unsigned long)faulting_pte, (unsigned long)pte_val(pte));
+//        print_page_table(virt, "Unknown FOF");
     }
 
 	// Mark attack as off
