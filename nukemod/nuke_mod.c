@@ -327,6 +327,8 @@ static int handler_fault(struct kprobe *p, struct pt_regs *regs, int trapnr)
 {
 	pte_t pte, temp_pte, *faulting_pte;
 	faulting_pte = (pte_t *)regs->di;
+    unsigned long virt = regs->si;
+    print_page_table(virt, "handler_fault");
 	pte = *faulting_pte;
 
 	fault_fault_cnt++;
