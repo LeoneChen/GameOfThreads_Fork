@@ -22,6 +22,7 @@ Please note you need to download the dataset. Run the script `download_cifar10.s
 ------------------------------------
 How to Build/Execute the Sample Code
 ------------------------------------
+(I merge following cmd into run.sh)
 1. Install Intel(R) Software Guard Extensions (Intel(R) SGX) SDK for Linux* OS
 2. Build the project with the prepared Makefile:
     a. Hardware Mode, Debug build:
