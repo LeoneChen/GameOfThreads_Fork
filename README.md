@@ -12,6 +12,10 @@ I modified driver to treat fault-on-fault respectively, kindly metigate some new
 
 And I think using noticy_attack to catch all page faults is not a good idea to pause threads, and I think register a SIGSEGV handler to handle page faults is a better idea to pause threads.
 
+As there are logic about prot_none check in handle_pte_fault, so I think when undo page-flag-modify, we should clear prot_none as well.
+
+Notice: %p parameter in printk will output a "hashed" address.
+
 ## Original README
 
 This directory contains the code to run the proof-of-concept APA attack against real SGX hardware.
