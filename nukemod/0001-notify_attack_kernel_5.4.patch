@@ -1,12 +1,31 @@
-From 14dd0615cc68e694c9626e1b33e2dd9294fb0a0b Mon Sep 17 00:00:00 2001
-From: leone <791960492@qq.com>
-Date: Wed, 18 Nov 2020 11:08:11 +0800
-Subject: [PATCH] notify_attack
-
----
- mm/memory.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 9ceacd115..4e1f7b679 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -1484,7 +1484,7 @@ void do_user_addr_fault(struct pt_regs *regs,
+ 
+ 	check_v8086_mode(regs, address, tsk);
+ }
+-NOKPROBE_SYMBOL(do_user_addr_fault);
++//NOKPROBE_SYMBOL(do_user_addr_fault);
+ 
+ /*
+  * Explicitly marked noinline such that the function tracer sees this as the
+@@ -1505,7 +1505,7 @@ __do_page_fault(struct pt_regs *regs, unsigned long hw_error_code,
+ 	else
+ 		do_user_addr_fault(regs, hw_error_code, address);
+ }
+-NOKPROBE_SYMBOL(__do_page_fault);
++//NOKPROBE_SYMBOL(__do_page_fault);
+ 
+ static __always_inline void
+ trace_page_fault_entries(struct pt_regs *regs, unsigned long error_code,
+@@ -1530,4 +1530,4 @@ do_page_fault(struct pt_regs *regs, unsigned long error_code, unsigned long addr
+ 	__do_page_fault(regs, error_code, address);
+ 	exception_exit(prev_state);
+ }
+-NOKPROBE_SYMBOL(do_page_fault);
++//NOKPROBE_SYMBOL(do_page_fault);
 diff --git a/mm/memory.c b/mm/memory.c
 index b1ca51a07..a3afad518 100644
 --- a/mm/memory.c
@@ -35,6 +54,3 @@ index b1ca51a07..a3afad518 100644
  	if (!pte_present(vmf->orig_pte))
  		return do_swap_page(vmf);
  
--- 
-2.17.1
-
