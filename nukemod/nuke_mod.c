@@ -187,14 +187,14 @@ static ssize_t device_write(struct file *file, const char __user *buffer, size_t
 	switch (type) {
 	case APPEND_ADDR:
 //        prt_pt_flag = 1;
-//		pr_info("Storing addr 0x%lx\n", address);
-		store_nuked_address(&nuke_info_head, address);
+		pr_info("Storing addr 0x%lx\n", address);
+//		store_nuked_address(&nuke_info_head, address);
         print_page_table(address, "Image");
 		break;
 
 	case PASS_SPECIAL_ADDR:
-//		pr_info("Storing special addr 0x%lx\n", address);
-        print_page_table(address, "Model");
+		pr_info("Storing special addr 0x%lx\n", address);
+//        print_page_table(address, "Model");
 		special.nuke_virtual_addr = address;
 		special.nuke_mm = current->mm;
 		do_page_walk(special.nuke_mm, address, &(special.nuke_pte), &ptlp);
