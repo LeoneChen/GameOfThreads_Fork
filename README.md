@@ -4,7 +4,7 @@
 
 Original git repo is here (I modify it for making it work well):
 
-- https://github.com/jose-sv/hogwild_pytorch
+- https://github.com/FPSG-UIUC/hogwild_pytorch/tree/master/sgx-poc
 
 notify_attack will catch all page faults and many of these are not relate with this POC (means many page faults are not Image's or Model's Faults), the original POC's driver restore all fault pages' present bit, which will cause new page fault (may be #PF: supervisor read access in kernel mode). 
 
