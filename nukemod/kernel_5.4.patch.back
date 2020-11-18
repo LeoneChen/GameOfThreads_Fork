@@ -1,0 +1,60 @@
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 9ceacd115..4e1f7b679 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -1484,7 +1484,7 @@ void do_user_addr_fault(struct pt_regs *regs,
+ 
+ 	check_v8086_mode(regs, address, tsk);
+ }
+-NOKPROBE_SYMBOL(do_user_addr_fault);
++//NOKPROBE_SYMBOL(do_user_addr_fault);
+ 
+ /*
+  * Explicitly marked noinline such that the function tracer sees this as the
+@@ -1505,7 +1505,7 @@ __do_page_fault(struct pt_regs *regs, unsigned long hw_error_code,
+ 	else
+ 		do_user_addr_fault(regs, hw_error_code, address);
+ }
+-NOKPROBE_SYMBOL(__do_page_fault);
++//NOKPROBE_SYMBOL(__do_page_fault);
+ 
+ static __always_inline void
+ trace_page_fault_entries(struct pt_regs *regs, unsigned long error_code,
+@@ -1530,4 +1530,4 @@ do_page_fault(struct pt_regs *regs, unsigned long error_code, unsigned long addr
+ 	__do_page_fault(regs, error_code, address);
+ 	exception_exit(prev_state);
+ }
+-NOKPROBE_SYMBOL(do_page_fault);
++//NOKPROBE_SYMBOL(do_page_fault);
+diff --git a/mm/memory.c b/mm/memory.c
+index b1ca51a07..c38d1b0bf 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3787,6 +3787,18 @@ static vm_fault_t wp_huge_pud(struct vm_fault *vmf, pud_t orig_pud)
+ 	return VM_FAULT_FALLBACK;
+ }
+ 
++pte_t *fault_pte;
++EXPORT_SYMBOL(fault_pte);
++
++unsigned long fault_virt;
++EXPORT_SYMBOL(fault_virt);
++
++static noinline void notify_attack(pte_t *curr_pte, unsigned long curr_virt) {
++	fault_pte = curr_pte;
++	fault_virt = curr_virt;
++}
++EXPORT_SYMBOL(notify_attack);
++
+ /*
+  * These routines also need to handle stuff like marking pages dirty
+  * and/or accessed for architectures that don't do it in hardware (most
+@@ -3849,6 +3861,8 @@ static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
+ 			return do_fault(vmf);
+ 	}
+ 
++	notify_attack(vmf->pte, vmf->address);
++
+ 	if (!pte_present(vmf->orig_pte))
+ 		return do_swap_page(vmf);
+ 

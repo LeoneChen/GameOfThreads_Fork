@@ -32,7 +32,7 @@ Here are the instructions to patch and install this kernel.
 - Download Ubuntu kernel 5.4 from offcial site:
   - https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/linux-5.4.4.tar.gz
 - Extract the downloaded kernel into a directory `linux-5.4`.
-- Patch the extracted kernel using our provided kernel patch `0001-notify_attack_kernel_5.4.patch`. To do this, `cd` into the directory `linux-5.4` and run `patch -p1 < ../0001-notify_attack_kernel_5.4.patch`.
+- Patch the extracted kernel using our provided kernel patch `kernel_5.4.patch`. To do this, `cd` into the directory `linux-5.4` and run `patch -p1 < ../kernel_5.4.patch`.
 - Compile and install the patched kernel. Instructions for this step are available in the README of the kernel itself. In short, you can run:
 ```sh
 cp /boot/config-`uname -r` .config (or make menuconfig)
