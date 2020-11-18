@@ -186,7 +186,7 @@ static ssize_t device_write(struct file *file, const char __user *buffer, size_t
 	// Identify the requested ioctl call
 	switch (type) {
 	case APPEND_ADDR:
-//        prt_pt_flag = 1;
+        prt_pt_flag = 1;
 		pr_info("Storing addr 0x%lx\n", address);
 		store_nuked_address(&nuke_info_head, address);
 //        print_page_table(address, "Image");
@@ -206,7 +206,7 @@ static ssize_t device_write(struct file *file, const char __user *buffer, size_t
 
 	case START_MONITORING:
 		pr_info("On the lookout for page faults of the stored addresses\n");
-        print_page_table(handler_fault, "handler_fault");
+//        print_page_table(handler_fault, "handler_fault");
 		monitoring = 1;
 		break;
 
