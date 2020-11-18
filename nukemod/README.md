@@ -32,7 +32,7 @@ Here are the instructions to patch and install this kernel.
 - Download Ubuntu kernel 5.4 from offcial site:
   - https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/linux-5.4.4.tar.gz
 - Extract the downloaded kernel into a directory `linux-5.4`.
-- Patch the extracted kernel using our provided kernel patch `kernel_5.4.patch`. To do this, `cd` into the directory `linux-5.4` and run `patch -p1 < ../kernel_5.4.patch`.
+- Patch the extracted kernel using our provided kernel patch `kernel_5.4.patch`(`kernel_5.4.patch.back`,  follows the author's work, remove `NOKPROBE_SYMBOL` label of `do_page_fault`,` __do_page_fault`, `do_user_addr_fault`, but I think there is no need). To do this, `cd` into the directory `linux-5.4` and run `patch -p1 < ../kernel_5.4.patch`.
 - Compile and install the patched kernel. Instructions for this step are available in the README of the kernel itself. In short, you can run:
 ```sh
 cp /boot/config-`uname -r` .config (or make menuconfig)
@@ -47,6 +47,7 @@ GRUB_CMDLINE_LINUX_DEFAULT="nosmap transparent_hugepage=never"
 - Reboot your machine into the custom kernel with the custom configuration.
 
 # Usage
+(I merge following cmd into load_nuke.sh)
 - Compile `nukemod` module by running `make`.
 - (optional) Clear the message buffer of the kernel using `sudo dmesg --clear`.
 - Create a device file for `nukemod` using `sudo mknod /dev/nuke_channel c 511 0`.
