@@ -320,6 +320,8 @@ struct file_operations Fops = {
 //endregion
 
 /*
+ * (Modified: Only handle fault-on-fault about Image or Model, ignore other FOFs)
+ * 
  * handler_fault is invoked in the case of a nested page fault while we were
  * executing the kprobes trampoline code (see post_handler).
  * Usually this means that we tried to access an address we shouldn't. In this
@@ -361,7 +363,7 @@ static int handler_fault(struct kprobe *p, struct pt_regs *regs, int trapnr)
     }
 
 	// Mark attack as off
-	monitoring = 1;
+//	monitoring = 0;
 
 	// We let the kprobe handler to handle the page fault
 	return 0;
