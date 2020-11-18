@@ -343,6 +343,7 @@ static int handler_fault(struct kprobe *p, struct pt_regs *regs, int trapnr)
         // Cancel the current page fault
         if (!(pte_flags(pte) & _PAGE_PRESENT) && (pte_flags(pte) & _PAGE_PROTNONE)) {
             pte_t temp_pte = pte_set_flags(pte, _PAGE_PRESENT);
+            temp_pte = pte_clear_flags(temp_pte, _PAGE_PROTNONE);
             set_pte(faulting_pte, temp_pte);
         }
     } else if (v0 == v1) {
@@ -350,6 +351,7 @@ static int handler_fault(struct kprobe *p, struct pt_regs *regs, int trapnr)
         if (!(pte_flags(pte) & _PAGE_PRESENT) && (pte_flags(pte) & _PAGE_PROTNONE)) {
             // Undo arbitrarily caused page fault
             pte_t temp_pte = pte_set_flags(pte, _PAGE_PRESENT);
+            temp_pte = pte_clear_flags(temp_pte, _PAGE_PROTNONE);
             set_pte(faulting_pte, temp_pte);
         }
     } else {
@@ -359,7 +361,7 @@ static int handler_fault(struct kprobe *p, struct pt_regs *regs, int trapnr)
     }
 
 	// Mark attack as off
-	monitoring = 0;
+	monitoring = 1;
 
 	// We let the kprobe handler to handle the page fault
 	return 0;
@@ -426,6 +428,7 @@ static void post_handler(struct kprobe *p, struct pt_regs *regs, unsigned long f
 
 					// Undo arbitrarily caused page fault
 					temp_pte = pte_set_flags(pte, _PAGE_PRESENT);
+                    temp_pte = pte_clear_flags(temp_pte, _PAGE_PROTNONE);
 					set_pte(faulting_pte, temp_pte);
 
 					// Ensure the special page faults at its next access
@@ -450,6 +453,7 @@ static void post_handler(struct kprobe *p, struct pt_regs *regs, unsigned long f
 						// Undo arbitrarily caused page fault for model
 						if (!(pte_flags(*(special.nuke_pte)) & _PAGE_PRESENT) && (pte_flags(*(special.nuke_pte)) & _PAGE_PROTNONE)) {
 							temp_pte = pte_set_flags(*(special.nuke_pte), _PAGE_PRESENT);
+                            temp_pte = pte_clear_flags(temp_pte, _PAGE_PROTNONE);
 							set_pte(special.nuke_pte, temp_pte);
 						}
 
@@ -458,6 +462,7 @@ static void post_handler(struct kprobe *p, struct pt_regs *regs, unsigned long f
 						while (tmp != NULL) {
 							if (!(pte_flags(*(tmp->nuke_pte)) & _PAGE_PRESENT) && (pte_flags(*(tmp->nuke_pte)) & _PAGE_PROTNONE)) {
 								temp_pte = pte_set_flags(*(tmp->nuke_pte), _PAGE_PRESENT);
+                                temp_pte = pte_clear_flags(temp_pte, _PAGE_PROTNONE);
 								set_pte(tmp->nuke_pte, temp_pte);
 							}
 
@@ -494,6 +499,7 @@ static void post_handler(struct kprobe *p, struct pt_regs *regs, unsigned long f
 
 					// Undo arbitrarily caused page fault
 					temp_pte = pte_set_flags(pte, _PAGE_PRESENT);
+                    temp_pte = pte_clear_flags(temp_pte, _PAGE_PROTNONE);
 					set_pte(faulting_pte, temp_pte);
 
 					if (last_iteration == 1) {
@@ -503,6 +509,7 @@ static void post_handler(struct kprobe *p, struct pt_regs *regs, unsigned long f
 						// Undo arbitrarily caused page fault for model
 						if (!(pte_flags(*(special.nuke_pte)) & _PAGE_PRESENT) && (pte_flags(*(special.nuke_pte)) & _PAGE_PROTNONE)) {
 							temp_pte = pte_set_flags(*(special.nuke_pte), _PAGE_PRESENT);
+                            temp_pte = pte_clear_flags(temp_pte, _PAGE_PROTNONE);
 							set_pte(special.nuke_pte, temp_pte);
 						}
 
@@ -511,6 +518,7 @@ static void post_handler(struct kprobe *p, struct pt_regs *regs, unsigned long f
 						while (tmp != NULL) {
 							if (!(pte_flags(*(tmp->nuke_pte)) & _PAGE_PRESENT) && (pte_flags(*(tmp->nuke_pte)) & _PAGE_PROTNONE)) {
 								temp_pte = pte_set_flags(*(tmp->nuke_pte), _PAGE_PRESENT);
+                                temp_pte = pte_clear_flags(temp_pte, _PAGE_PROTNONE);
 								set_pte(tmp->nuke_pte, temp_pte);
 							}
 							tmp = tmp->next;
