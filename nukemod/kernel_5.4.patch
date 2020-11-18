@@ -37,7 +37,7 @@ index b1ca51a07..c38d1b0bf 100644
 +pte_t *fault_pte;
 +EXPORT_SYMBOL(fault_pte);
 +
-+unsigned long *fault_virt;
++unsigned long fault_virt;
 +EXPORT_SYMBOL(fault_virt);
 +
 +static noinline void notify_attack(pte_t *curr_pte, unsigned long curr_virt) {
