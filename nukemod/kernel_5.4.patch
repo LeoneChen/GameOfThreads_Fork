@@ -27,25 +27,29 @@ index 9ceacd115..4e1f7b679 100644
 -NOKPROBE_SYMBOL(do_page_fault);
 +//NOKPROBE_SYMBOL(do_page_fault);
 diff --git a/mm/memory.c b/mm/memory.c
-index b1ca51a07..a3afad518 100644
+index b1ca51a07..c38d1b0bf 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -3787,6 +3787,14 @@ static vm_fault_t wp_huge_pud(struct vm_fault *vmf, pud_t orig_pud)
+@@ -3787,6 +3787,18 @@ static vm_fault_t wp_huge_pud(struct vm_fault *vmf, pud_t orig_pud)
  	return VM_FAULT_FALLBACK;
  }
  
-+#define UNUSED(val) (void)(val)
++pte_t *fault_pte;
++EXPORT_SYMBOL(fault_pte);
++
++unsigned long *fault_virt;
++EXPORT_SYMBOL(fault_virt);
 +
 +static noinline void notify_attack(pte_t *curr_pte, unsigned long curr_virt) {
-+	UNUSED(curr_pte);
-+	UNUSED(curr_virt);
++	fault_pte = curr_pte;
++	fault_virt = curr_virt;
 +}
 +EXPORT_SYMBOL(notify_attack);
 +
  /*
   * These routines also need to handle stuff like marking pages dirty
   * and/or accessed for architectures that don't do it in hardware (most
-@@ -3849,6 +3857,8 @@ static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
+@@ -3849,6 +3861,8 @@ static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
  			return do_fault(vmf);
  	}
  
