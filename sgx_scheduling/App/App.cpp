@@ -345,7 +345,7 @@ int main(int argc, char* argv[])
 
     posix_memalign((void **)&sealed_buf, 4096, sizeof(*sealed_buf));
 
-    cifar::read_array_dataset(&ds, 1500, 1);
+    cifar::read_array_dataset(&ds, 1000, 1);
 
     // check the length of the image (3*32*32 pixels)
     assert(ds.image_len == 4096);
