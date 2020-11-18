@@ -1,0 +1,40 @@
+From 14dd0615cc68e694c9626e1b33e2dd9294fb0a0b Mon Sep 17 00:00:00 2001
+From: leone <791960492@qq.com>
+Date: Wed, 18 Nov 2020 11:08:11 +0800
+Subject: [PATCH] notify_attack
+
+---
+ mm/memory.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/mm/memory.c b/mm/memory.c
+index b1ca51a07..a3afad518 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3787,6 +3787,14 @@ static vm_fault_t wp_huge_pud(struct vm_fault *vmf, pud_t orig_pud)
+ 	return VM_FAULT_FALLBACK;
+ }
+ 
++#define UNUSED(val) (void)(val)
++
++static noinline void notify_attack(pte_t *curr_pte, unsigned long curr_virt) {
++	UNUSED(curr_pte);
++	UNUSED(curr_virt);
++}
++EXPORT_SYMBOL(notify_attack);
++
+ /*
+  * These routines also need to handle stuff like marking pages dirty
+  * and/or accessed for architectures that don't do it in hardware (most
+@@ -3849,6 +3857,8 @@ static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
+ 			return do_fault(vmf);
+ 	}
+ 
++	notify_attack(vmf->pte, vmf->address);
++
+ 	if (!pte_present(vmf->orig_pte))
+ 		return do_swap_page(vmf);
+ 
+-- 
+2.17.1
+

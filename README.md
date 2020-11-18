@@ -1,3 +1,9 @@
+# I modified this POC that come from following git repository 
+
+Original git repo is here (I modify it for making it work well):
+
+- https://github.com/jose-sv/hogwild_pytorch
+
 # Proof of concept APA Attack against SGX
 
 This directory contains the code to run the proof-of-concept APA attack against real SGX hardware.

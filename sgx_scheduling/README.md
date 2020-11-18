@@ -1,3 +1,11 @@
+# I modified this POC that come from following git repository 
+
+Original git repo is here (I modify it for making it work well):
+
+- https://github.com/jose-sv/hogwild_pytorch
+
+# Overview
+
 This code is a simple application which mimics a machine learning application.
 This application loads Cifar10 into enclave threads which access it independently --- Asynchronously.
 

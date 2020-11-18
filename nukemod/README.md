@@ -1,3 +1,9 @@
+# I modified this POC that come from following git repository 
+
+Original git repo is here (I modify it for making it work well):
+
+- https://github.com/jose-sv/hogwild_pytorch
+
 # Overview
 
 `nukemod` is a kernel module that can be used to perform controlled-channel attacks and to halt / resume user-space threads from the operating system. It is used in the paper:
@@ -14,25 +20,25 @@ We tested this code on a bare-metal machine with an Intel i7-6700K CPU @ 4.00GHz
 We cannot guarantee that it works on other CPUs or in virtualized environments.
 
 # Required Setup
-- Ubuntu 16.04 LTS
+- Ubuntu 18.04 LTS
 
 # Prerequisites
 To monitor page-faults, `nukemod` hooks the page fault handler of the Linux kernel.
 However, this is not allowed by default in the Linux kernel.
-To circumvent this limitation, we minimally modified kernel 4.4.0-101.124 so that it allows to hook the page fault handler.
+To circumvent this limitation, we minimally modified kernel 5.4 so that it allows to hook the page fault handler.
 Here are the instructions to patch and install this kernel.
 
 - Install the required packages by running `sudo apt install -y build-essential ocaml automake autoconf libtool wget python libssl-dev bc`.
-- Download Ubuntu kernel 4.4.0-101.124 from here:
-  - https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/linux/4.4.0-101.124/linux_4.4.0.orig.tar.gz
-- Extract the downloaded kernel into a directory `linux-4.4`.
-- Patch the extracted kernel using our provided kernel patch `4.4.0-101.124.patch`. To do this, `cd` into the directory `linux-4.4` and run `patch -p1 < ../4.4.0-101.124.patch`.
+- Download Ubuntu kernel 5.4 from offcial site:
+  - https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/linux-5.4.4.tar.gz
+- Extract the downloaded kernel into a directory `linux-5.4`.
+- Patch the extracted kernel using our provided kernel patch `0001-notify_attack_kernel_5.4.patch`. To do this, `cd` into the directory `linux-5.4` and run `patch -p1 < ../0001-notify_attack_kernel_5.4.patch`.
 - Compile and install the patched kernel. Instructions for this step are available in the README of the kernel itself. In short, you can run:
 ```sh
-cp /boot/config-`uname -r` .config
+cp /boot/config-`uname -r` .config (or make menuconfig)
 make -j `nproc` && sudo make modules_install && sudo make install
 ```
-- After installing the custom kernel, make sure to add the kernel boot parameters `nosmap` and `transparent_hugepage=never` to grub.
+- After installing the custom kernel, make sure to add the kernel boot parameters `nosmap` and `transparent_hugepage=never` to grub (`noacpi` may helpful).
 This can be done by modifying a line in the file `/etc/default/grub`:
 ```sh
 GRUB_CMDLINE_LINUX_DEFAULT="nosmap transparent_hugepage=never"
