@@ -12,9 +12,11 @@ I modified driver to treat fault-on-fault respectively, kindly metigate some new
 
 And I think using noticy_attack to catch all page faults is not a good idea to pause threads, and I think register a SIGSEGV handler to handle page faults is a better idea to pause threads.
 
-As there are logic about prot_none check in handle_pte_fault, so I think when undo page-flag-modify, we should clear prot_none as well.
+Discuss: As there are logic about prot_none check in handle_pte_fault, so I think when undo page-flag-modify, we should clear prot_none as well.
 
-Notice: %p parameter in printk will output a "hashed" address.
+Discuss: Because we don't kprobe do_page_fault, __do_page_fault, do_user_addr_fault, so it needn't to remove "NOKPROBE_SYMBOL" label.
+
+Notice: %p parameter in printk will output a "hashed" address, so 0x%lx may helpful.(https://lwn.net/Articles/737451/)
 
 ## Original README
 
