@@ -10,6 +10,10 @@ Related Issue:
 
 - https://github.com/FPSG-UIUC/hogwild_pytorch/issues/10
 
+Related Blog
+
+- https://blog.csdn.net/clh14281055/article/details/109594779
+
 I realize that notify_attack will catch all page faults and many of these are not relate with this POC (means many page faults are not Image's or Model's Faults), the original POC's driver restore all fault pages' present bit, which will cause new page fault (may be #PF: supervisor read access in kernel mode). 
 
 I modified driver to treat fault-on-fault respectively, kindly metigate some new fualt( but still some page fualt thar I have no idea, fualt page is not about Images' or Model's page).
